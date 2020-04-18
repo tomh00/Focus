@@ -2,12 +2,12 @@
 // Created by tom on 06/04/2020.
 //
 #include "game_init.h"
-#include "movement.h"
+#include "moves.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
-bool * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]) {
+void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]) {
     int line, column;
     player *currentPlayer;
 
@@ -68,15 +68,13 @@ bool * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][B
     }
 
     movementManager(line, column, board, currentPlayer);
-
-    return lastTurn;
 }
 
 void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE], player *currentPlayer){
     int input;
     int movement = board[line][column].num_pieces; /* Movement allowed variable */
-    piece *current = board[line][column].stack;/* Pointer to be used to navigate through the stack and connect */
     bool validMove = false; /* Boolean to determine when to break from loop */
+
     while(!validMove) {
         printf("You can move this piece %d squares" /* Pieces can be moved the size of the stack */
                "\nPlease indicate:"
@@ -90,32 +88,15 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
                 /* Determine whether the piece can be moved this far in this direction
                  * If not break from switch
                  */
-                if ((line - movement) < 0 || board[line - movement][column].type == INVALID) {
-                    puts("There are not enough squares in this direction for this move!"
-                         "\n Please try again.");
+                if (checkValidity(&board[line - movement][column], line-movement) == INVALID) {
                     break;
                 }
                 else{
-                    /*
-                     * Navigate to bottom of stack
-                     */
-                    while(current->next != NULL){
-                        current = current->next;
-                    }
-                    current->next = board[line - movement][column].stack; /* Link to top piece of other stack */
-                    board[line - movement][column].stack = board[line][column].stack; /* Set new top piece to top piece of moved stack, which is now linked appropriately */
+                    board[line - movement][column].stack = stack(&board[line][column].stack, &board[line - movement][column].stack); /* Stack stacks together */
                     board[line][column].stack = NULL; /* This square no longer points to moved piece */
-                    board[line - movement][column].num_pieces += board[line][column].num_pieces; /* Adjust number of pieces in new stack by addition of both stack numbers */
-                    board[line][column].num_pieces = 0; /* Adjust number of pieces on square which was moved from to 0 */
-                    /*
-                     * If the stack reaches a size larger than 5 pieces excess pieces must be removed from the bottom of the stack
-                     */
-                    if(board[line - movement][column].num_pieces > 5){
-                        removePieces(board[line-movement][column].stack, currentPlayer);
-                        board[line - movement][column].num_pieces = 5;
+                    pieceNumManager(&board[line - movement][column], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                     }
-                    validMove = true; /* End of loop condition satisfied */
-                }
+                validMove = true; /* End of loop condition satisfied */
                 break;
 
             /*
@@ -123,72 +104,39 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
              * change piece to be moved to with manipulation of +/- operators on line and column of the piece being moved
              */
             case 2:
-                if((line + movement) > 7 || board[line + movement][column].type == INVALID){
-                    puts("There are not enough squares in this direction for this move!"
-                         "\n Please try again");
+                if(checkValidity(&board[line + movement][column], line+movement) == INVALID){
                     break;
                 }
                 else{
-                    while(current->next != NULL){
-                        current = current->next;
-                    }
-                    current->next = board[line + movement][column].stack;
-                    board[line+movement][column].stack = board[line][column].stack;
-                    board[line][column].stack = NULL;
-                    board[line + movement][column].num_pieces += board[line][column].num_pieces;
-                    board[line][column].num_pieces = 0;
-                    if(board[line + movement][column].num_pieces > 5){
-                        removePieces(board[line+movement][column].stack, currentPlayer);
-                        board[line + movement][column].num_pieces = 5;
-                    }
-                    validMove = true;
+                    board[line + movement][column].stack = stack(&board[line][column].stack, &board[line + movement][column].stack); /* Stack stacks together */
+                    board[line][column].stack = NULL; /* This square no longer points to moved piece */
+                    pieceNumManager(&board[line + movement][column], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                 }
+                validMove = true; /* End of loop condition satisfied */
                 break;
 
             case 3:
-                if((column - movement) < 0 || board[line][column - movement].type == INVALID){
-                    puts("There are not enough squares in this direction for this move!"
-                         "\n Please try again");
+                if(checkValidity(&board[line][column - movement], column-movement) == INVALID){
                     break;
                 }
                 else{
-                    while(current->next != NULL){
-                        current = current->next;
-                    }
-                    current->next = board[line][column - movement].stack;
-                    board[line][column - movement].stack = board[line][column].stack;
-                    board[line][column].stack = NULL;
-                    board[line][column - movement].num_pieces += board[line][column].num_pieces;
-                    board[line][column].num_pieces = 0;
-                    if(board[line][column - movement].num_pieces > 5){
-                        removePieces(board[line][column - movement].stack, currentPlayer);
-                        board[line][column - movement].num_pieces = 5;
-                    }
-                    validMove = true;
+                    board[line][column - movement].stack = stack(&board[line][column].stack, &board[line][column - movement].stack); /* Stack stacks together */
+                    board[line][column].stack = NULL; /* This square no longer points to moved piece */
+                    pieceNumManager(&board[line][column - movement], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                 }
+                validMove = true; /* End of loop condition satisfied */
                 break;
 
             case 4:
-                if((column + movement) > 7 || board[line][column + movement].type == INVALID){
-                    puts("There are not enough squares in this direction for this move!"
-                         "\n Please try again");
+                if(checkValidity(&board[line][column + movement], column+movement) == INVALID){
                     break;
                 }
                 else{
-                    while(current->next != NULL){
-                        current = current->next;
-                    }
-                    current->next = board[line][column + movement].stack;
-                    board[line][column + movement].stack = board[line][column].stack;
-                    board[line][column].stack = NULL;
-                    board[line][column + movement].num_pieces += board[line][column].num_pieces;
-                    board[line][column].num_pieces = 0;
-                    if(board[line][column + movement].num_pieces > 5){
-                        removePieces(board[line][column + movement].stack, currentPlayer);
-                        board[line][column + movement].num_pieces = 5;
-                    }
-                    validMove = true;
+                    board[line][column + movement].stack = stack(&board[line][column].stack, &board[line][column + movement].stack); /* Stack stacks together */
+                    board[line][column].stack = NULL; /* This square no longer points to moved piece */
+                    pieceNumManager(&board[line][column + movement], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                 }
+                validMove = true; /* End of loop condition satisfied */
                 break;
         }
     }
@@ -221,13 +169,17 @@ void removePieces(piece *last, player *currentPlayer){
     while(current != NULL){
         toRemove = current; /* Set element to be removed and move current on further */
         current = current->next;
-        excessPieceControl(toRemove, currentPlayer);
+        excessPieceControl(toRemove, currentPlayer); /* Allocate the kept piece correctly */
         free(toRemove); /* Deallocate memory pointed to by toRemove */
     }
     last->next = NULL; /* The last element of the stack must always point to NULL */
 }
 
 void excessPieceControl(piece * removedPiece, player *currentPlayer){
+    /*
+     * If piece removed is the same as player colour player must keep in keptPieces
+     * Else the piece is discarded in capturedPieces
+     */
     if (removedPiece->piece_color == currentPlayer->player_color){
         currentPlayer->piecesKept++;
     }
@@ -236,8 +188,46 @@ void excessPieceControl(piece * removedPiece, player *currentPlayer){
     }
 }
 
-/*square_type checkValidity(square *testSquare){
-    if(testSquare->type == INVALID){
-        puts()
+square_type checkValidity(square *testSquare, int testIndex){
+    /*
+     * Check if square is valid or invalid or if it is contained on the board
+     * return Valid or Invalid
+     */
+    if(testSquare->type == INVALID || testIndex < 0 || testIndex > 7){
+        puts("There are not enough squares to move this piece in this direction!\n"
+             "Please try again:\n");
+        return INVALID;
     }
-}*/
+    else{
+        return VALID;
+    }
+}
+
+piece * stack(piece *topPiece1, piece *topPiece2){
+    piece *current = topPiece1; /* Piece pointer to navigate throught the stack */
+
+    /*
+     * Navigate to bottom of stack
+     */
+    while(current->next != NULL){
+        current = current->next;
+    }
+    current->next = topPiece2; /* Link bottom piece of stack one to top piece of stack two */
+
+    return topPiece1;
+}
+
+void pieceNumManager(square *square1, square *square2, player *currentPlayer){
+    /*
+     * The stacks on square 1 and square 2 have been stacked on one another at square 1
+     * The number of pieces on square 1 becomes the addition of both stacks
+     * The number of pieces on square 2 becomes 0
+     */
+    square1->num_pieces += square2->num_pieces;
+    square2->num_pieces = 0;
+
+    if(square1->num_pieces > 5){
+        removePieces(square1->stack, currentPlayer);
+        square1->num_pieces = 5;
+    }
+}

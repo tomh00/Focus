@@ -2,7 +2,7 @@
 
 #include "input_output.h"
 #include <stdbool.h>
-#include "movement.h"
+#include "moves.h"
 #include <stdlib.h>
 
 int main() {
