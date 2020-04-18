@@ -7,14 +7,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE]);
-
-void removePieces(piece *last);
-
 bool * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]) {
     int line, column;
+    player *currentPlayer;
 
-    int playerNum;
     for (bool validColor = false; validColor != true;) {
         if (!lastTurn[0]) { /* Use test array to determine which player should move next*/
             printf("%s:\nEnter the index of the square of the piece you would like to move\nEnter the line first, then column:\n",
@@ -23,7 +19,7 @@ bool * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][B
             /* Adjust turn management variables */
             lastTurn[0] = true;
             lastTurn[1] = false;
-            playerNum = 0;
+            currentPlayer = &players[0];
         }
         /*
          * Repeat same process for other player in the case of the other player's turn
@@ -34,7 +30,7 @@ bool * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][B
             scanf("%d%d", &line, &column);
             lastTurn[1] = true;
             lastTurn[0] = false;
-            playerNum = 1;
+            currentPlayer = &players[1];
         }
 
         /*
@@ -55,7 +51,7 @@ bool * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][B
          * If valid square is selected check player colour and piece colour match
          * if they do not match reset turn manager array
          */
-        else if (board[line][column].stack->piece_color != players[playerNum].player_color) {
+        else if (board[line][column].stack->piece_color != currentPlayer->player_color) {
             puts("You have chosen a piece that is not yours to move! Please try again:");
             if (lastTurn[0]) {
                 lastTurn[0] = false;
@@ -71,12 +67,12 @@ bool * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][B
         }
     }
 
-    movementManager(line, column, board);
+    movementManager(line, column, board, currentPlayer);
 
     return lastTurn;
 }
 
-void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE]){
+void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE], player *currentPlayer){
     int input;
     int movement = board[line][column].num_pieces; /* Movement allowed variable */
     piece *current = board[line][column].stack;/* Pointer to be used to navigate through the stack and connect */
@@ -109,13 +105,13 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE])
                     current->next = board[line - movement][column].stack; /* Link to top piece of other stack */
                     board[line - movement][column].stack = board[line][column].stack; /* Set new top piece to top piece of moved stack, which is now linked appropriately */
                     board[line][column].stack = NULL; /* This square no longer points to moved piece */
-                    board[line - movement][column].num_pieces += board[line][column].num_pieces; /* Adjust number of pieces in new stack by addition of both stack numers */
+                    board[line - movement][column].num_pieces += board[line][column].num_pieces; /* Adjust number of pieces in new stack by addition of both stack numbers */
                     board[line][column].num_pieces = 0; /* Adjust number of pieces on square which was moved from to 0 */
                     /*
                      * If the stack reaches a size larger than 5 pieces excess pieces must be removed from the bottom of the stack
                      */
                     if(board[line - movement][column].num_pieces > 5){
-                        removePieces(board[line-movement][column].stack);
+                        removePieces(board[line-movement][column].stack, currentPlayer);
                         board[line - movement][column].num_pieces = 5;
                     }
                     validMove = true; /* End of loop condition satisfied */
@@ -142,7 +138,7 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE])
                     board[line + movement][column].num_pieces += board[line][column].num_pieces;
                     board[line][column].num_pieces = 0;
                     if(board[line + movement][column].num_pieces > 5){
-                        removePieces(board[line+movement][column].stack);
+                        removePieces(board[line+movement][column].stack, currentPlayer);
                         board[line + movement][column].num_pieces = 5;
                     }
                     validMove = true;
@@ -165,7 +161,7 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE])
                     board[line][column - movement].num_pieces += board[line][column].num_pieces;
                     board[line][column].num_pieces = 0;
                     if(board[line][column - movement].num_pieces > 5){
-                        removePieces(board[line][column - movement].stack);
+                        removePieces(board[line][column - movement].stack, currentPlayer);
                         board[line][column - movement].num_pieces = 5;
                     }
                     validMove = true;
@@ -188,7 +184,7 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE])
                     board[line][column + movement].num_pieces += board[line][column].num_pieces;
                     board[line][column].num_pieces = 0;
                     if(board[line][column + movement].num_pieces > 5){
-                        removePieces(board[line][column + movement].stack);
+                        removePieces(board[line][column + movement].stack, currentPlayer);
                         board[line][column + movement].num_pieces = 5;
                     }
                     validMove = true;
@@ -202,7 +198,7 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE])
  * Function to remove excess pieces from bottom of a stack
  * only called when a stack reaches a size larger than 5
  */
-void removePieces(piece *last){
+void removePieces(piece *last, player *currentPlayer){
     int counter = 1;
     piece * current = NULL;
     piece * toRemove = NULL;
@@ -225,7 +221,23 @@ void removePieces(piece *last){
     while(current != NULL){
         toRemove = current; /* Set element to be removed and move current on further */
         current = current->next;
+        excessPieceControl(toRemove, currentPlayer);
         free(toRemove); /* Deallocate memory pointed to by toRemove */
     }
     last->next = NULL; /* The last element of the stack must always point to NULL */
 }
+
+void excessPieceControl(piece * removedPiece, player *currentPlayer){
+    if (removedPiece->piece_color == currentPlayer->player_color){
+        currentPlayer->piecesKept++;
+    }
+    else{
+        currentPlayer->capturedPieces++;
+    }
+}
+
+/*square_type checkValidity(square *testSquare){
+    if(testSquare->type == INVALID){
+        puts()
+    }
+}*/
