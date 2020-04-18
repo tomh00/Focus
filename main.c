@@ -2,7 +2,7 @@
 
 #include "input_output.h"
 #include <stdbool.h>
-#include "player_moves.h"
+#include "movement.h"
 #include <stdlib.h>
 
 int main() {
@@ -22,13 +22,10 @@ int main() {
 
     bool lastTurn[] = {false, false}; /* Boolean array to maintain turns of the game */
 
-    turnManager(lastTurn, players, board); /* Takes care of player movement */
-
-    print_board(board);
-
-    turnManager(lastTurn, players, board);
-
-    print_board(board);
+    for(int i = 0; i < 20; i ++) {
+        turnManager(lastTurn, players, board); /* Takes care of player movement */
+        print_board(board);
+    }
 
     return 0;
 }
