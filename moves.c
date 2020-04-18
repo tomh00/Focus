@@ -7,69 +7,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]) {
-    int line, column;
-    player *currentPlayer;
-
-    for (bool validColor = false; validColor != true;) {
-        if (!lastTurn[0]) { /* Use test array to determine which player should move next*/
-            printf("%s:\nEnter the index of the square of the piece you would like to move\nEnter the line first, then column:\n",
-                   players[0].playerName); /* Request piece location of piece to be moved */
-            scanf("%d%d", &line, &column);
-            /* Adjust turn management variables */
-            lastTurn[0] = true;
-            lastTurn[1] = false;
-            currentPlayer = &players[0];
-        }
-        /*
-         * Repeat same process for other player in the case of the other player's turn
-         */
-        else {
-            printf("%s:\nEnter the index of the square of the piece you would like to move\nEnter the line first, then column:\n",
-                   players[1].playerName);
-            scanf("%d%d", &line, &column);
-            lastTurn[1] = true;
-            lastTurn[0] = false;
-            currentPlayer = &players[1];
-        }
-
-        /*
-         * Check validity of square selection
-         * If invalid, reset turn manager array
-         */
-        if ((line) < 0 || line > 7 || column < 0 || column > 7 || board[line][column].type == INVALID || board[line][column].stack == NULL) {
-            puts("This is not a valid square to select! Please try again");
-            if (lastTurn[0]) {
-                lastTurn[0] = false;
-                lastTurn[1] = true;
-            } else {
-                lastTurn[0] = true;
-                lastTurn[1] = false;
-            }
-        }
-        /*
-         * If valid square is selected check player colour and piece colour match
-         * if they do not match reset turn manager array
-         */
-        else if (board[line][column].stack->piece_color != currentPlayer->player_color) {
-            puts("You have chosen a piece that is not yours to move! Please try again:");
-            if (lastTurn[0]) {
-                lastTurn[0] = false;
-                lastTurn[1] = true;
-            }
-            else {
-                lastTurn[0] = true;
-                lastTurn[1] = false;
-            }
-        }
-        else{
-            validColor = true; /* Valid conditions met: break from loop */
-        }
-    }
-
-    movementManager(line, column, board, currentPlayer);
-}
-
 void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE], player *currentPlayer){
     int input;
     int movement = board[line][column].num_pieces; /* Movement allowed variable */
@@ -88,11 +25,11 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
                 /* Determine whether the piece can be moved this far in this direction
                  * If not break from switch
                  */
-                if (checkValidity(&board[line - movement][column], line-movement) == INVALID) {
+                if (checkValidity(&board[line - movement][column], line-movement, column) == INVALID) {
                     break;
                 }
                 else{
-                    board[line - movement][column].stack = stack(&board[line][column].stack, &board[line - movement][column].stack); /* Stack stacks together */
+                    board[line - movement][column].stack = stack(board[line][column].stack, board[line - movement][column].stack); /* Stack stacks together */
                     board[line][column].stack = NULL; /* This square no longer points to moved piece */
                     pieceNumManager(&board[line - movement][column], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                     }
@@ -104,11 +41,11 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
              * change piece to be moved to with manipulation of +/- operators on line and column of the piece being moved
              */
             case 2:
-                if(checkValidity(&board[line + movement][column], line+movement) == INVALID){
+                if(checkValidity(&board[line + movement][column], line+movement, column) == INVALID){
                     break;
                 }
                 else{
-                    board[line + movement][column].stack = stack(&board[line][column].stack, &board[line + movement][column].stack); /* Stack stacks together */
+                    board[line + movement][column].stack = stack(board[line][column].stack, board[line + movement][column].stack); /* Stack stacks together */
                     board[line][column].stack = NULL; /* This square no longer points to moved piece */
                     pieceNumManager(&board[line + movement][column], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                 }
@@ -116,11 +53,11 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
                 break;
 
             case 3:
-                if(checkValidity(&board[line][column - movement], column-movement) == INVALID){
+                if(checkValidity(&board[line][column - movement], column-movement, line) == INVALID){
                     break;
                 }
                 else{
-                    board[line][column - movement].stack = stack(&board[line][column].stack, &board[line][column - movement].stack); /* Stack stacks together */
+                    board[line][column - movement].stack = stack(board[line][column].stack, board[line][column - movement].stack); /* Stack stacks together */
                     board[line][column].stack = NULL; /* This square no longer points to moved piece */
                     pieceNumManager(&board[line][column - movement], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                 }
@@ -128,11 +65,11 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
                 break;
 
             case 4:
-                if(checkValidity(&board[line][column + movement], column+movement) == INVALID){
+                if(checkValidity(&board[line][column + movement], column+movement, line) == INVALID){
                     break;
                 }
                 else{
-                    board[line][column + movement].stack = stack(&board[line][column].stack, &board[line][column + movement].stack); /* Stack stacks together */
+                    board[line][column + movement].stack = stack(board[line][column].stack, board[line][column + movement].stack); /* Stack stacks together */
                     board[line][column].stack = NULL; /* This square no longer points to moved piece */
                     pieceNumManager(&board[line][column + movement], &board[line][column], currentPlayer); /* Adjust number of pieces on each square accordingly */
                 }
@@ -188,12 +125,12 @@ void excessPieceControl(piece * removedPiece, player *currentPlayer){
     }
 }
 
-square_type checkValidity(square *testSquare, int testIndex){
+square_type checkValidity(square *testSquare, int testIndex1, int testIndex2){
     /*
      * Check if square is valid or invalid or if it is contained on the board
      * return Valid or Invalid
      */
-    if(testSquare->type == INVALID || testIndex < 0 || testIndex > 7){
+    if(testSquare->type == INVALID || testIndex1 < 0 || testIndex1 > 7 || testIndex2 < 0 || testIndex2 > 7){
         puts("There are not enough squares to move this piece in this direction!\n"
              "Please try again:\n");
         return INVALID;

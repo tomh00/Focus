@@ -19,7 +19,7 @@ void excessPieceControl(piece *removedPiece, player *currentPlayer);
 
 void stackPiece(piece *, piece *);
 
-square_type checkValidity(square *testSquare, int testIndex);
+square_type checkValidity(square *testSquare, int testIndex1, int testIndex2);
 
 piece * stack(piece *top1, piece *top2);
 

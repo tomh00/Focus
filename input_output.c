@@ -30,3 +30,17 @@ void print_board(square board[BOARD_SIZE][BOARD_SIZE]){
         printf("|\n");
     }
 }
+
+int userInputInt(char *string){
+    /*
+     * Display request to user
+     * Read in from user
+     * Return value read in
+     */
+    int result;
+
+    printf("%s", string);
+    scanf("%d", &result);
+
+    return result;
+}
