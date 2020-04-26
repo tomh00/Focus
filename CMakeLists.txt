@@ -3,4 +3,4 @@ project(Focus C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Focus main.c input_output.c game_init.c game_init.h input_output.h moves.c moves.h turns.c turns.h )
+add_executable(Focus main.c input_output.c game_init.c game_init.h input_output.h moves.c moves.h turns.c turns.h in_game_status.c in_game_status.h)

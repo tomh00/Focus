@@ -5,6 +5,7 @@
 #include "moves.h"
 #include "turns.h"
 #include "input_output.h"
+#include "in_game_status.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -13,9 +14,32 @@ void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOA
     bool validSquare = false; /* Loop break variable */
     player *currentPlayer = &players[currentTurn(lastTurn)]; /* Call currentTurn for currentPlayer assignment */
 
+    /*
+     * Offer to show user the status of any of the squares on the board
+     * use squareStatusPrinter function to show these squares
+     */
+
+    int playerStatus = 0;
+    while(playerStatus == 0){
+        playerStatus = userInputInt("Enter 0 if you would like to see your player status or 1 if you would like to proceed with your turn: ");
+        if(playerStatus == 0){
+            playerStatusPrinter(currentPlayer);
+        }
+    }
+
+    int squareStatus = 0 ;
+    while(squareStatus == 0) {
+        squareStatus = userInputInt("Enter 0 if you would like to see the status of any square or 1 if you would like to proceed with your turn: ");
+        line = userInputInt("Enter the index of the line of the piece you would like to see the status of: ");
+        column = userInputInt("Enter the index of the column of the piece you would like to see the status of: ");
+        squareStatusPrinter(&board[line][column]); /* Print status of this square */
+    }
+    /*
+     * Offer the user to place a kept piece of theirs if they have any
+     */
     if(currentPlayer->piecesKept > 0){
         if(userInputInt("Enter 0 to move a stack on the board or 1 to place a kept piece on the board: ") == 1){
-
+            placeKeptPieces(currentPlayer, board);
         }
     }
 
