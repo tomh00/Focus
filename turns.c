@@ -8,23 +8,36 @@
 #include <stdio.h>
 
 void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]){
-    int line, column;
-    bool validSquare = false;
-    player *currentPlayer = NULL;
+    int line, column; /* Variables to hold index */
+    bool validSquare = false; /* Loop break variable */
+    player *currentPlayer = &players[currentTurn(lastTurn)]; /* Call currentTurn for currentPlayer assignment */
 
+    /*
+     * Loop to take user input of indices and check that they are valid in the current state of the game
+     */
     while(!validSquare) {
-        currentPlayer = &players[currentTurn(lastTurn)];
+        /*
+         * Ask player for indices and read them into memory using userInputInt function
+         */
+        printf("%s:\n", currentPlayer->playerName);
         line = userInputInt("Enter the index of the line of the piece you would like to move: ");
         column = userInputInt("Enter the index of the column of the piece you would like to move: ");
 
+        /*
+         * If square chosen is
+         * INVALID
+         * Empty
+         * or containing a stack that is not the current player's colour on top
+         * Print error message reset turn managing array and re enter loop
+         */
         if (checkValidity(&board[line][column], line, column) == INVALID ||
             testEmpty(&board[line][column]) || !testColour(&board[line][column], currentPlayer)) {
             puts("You cannot move this piece!"
                  "\nPlease ensure you pick a square with a piece on it and a stack with your colour at the top!");
             resetLastTurn(lastTurn); /* reset boolean array to repeat user turn */
         }
-        else{
-            validSquare = true;
+            else{
+            validSquare = true; /* break condition satisfied */
         }
     }
 

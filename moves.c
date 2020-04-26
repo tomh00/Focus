@@ -9,7 +9,7 @@
 
 void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE], player *currentPlayer){
     int input;
-    int movement = board[line][column].num_pieces; /* Movement allowed variable */
+    int movement = board[line][column].num_pieces; /* Number of squares that the piece selected can be moved */
     bool validMove = false; /* Boolean to determine when to break from loop */
 
     while(!validMove) {
@@ -118,10 +118,10 @@ void excessPieceControl(piece * removedPiece, player *currentPlayer){
      * Else the piece is discarded in capturedPieces
      */
     if (removedPiece->piece_color == currentPlayer->player_color){
-        currentPlayer->piecesKept++;
-    }
-    else{
-        currentPlayer->capturedPieces++;
+            currentPlayer->piecesKept++;
+        }
+        else{
+            currentPlayer->capturedPieces++;
     }
 }
 
@@ -141,7 +141,7 @@ square_type checkValidity(square *testSquare, int testIndex1, int testIndex2){
 }
 
 piece * stack(piece *topPiece1, piece *topPiece2){
-    piece *current = topPiece1; /* Piece pointer to navigate throught the stack */
+    piece *current = topPiece1; /* Piece pointer to navigate through the stack */
 
     /*
      * Navigate to bottom of stack
