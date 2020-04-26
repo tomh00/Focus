@@ -6,11 +6,18 @@
 #include "turns.h"
 #include "input_output.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]){
     int line, column; /* Variables to hold index */
     bool validSquare = false; /* Loop break variable */
     player *currentPlayer = &players[currentTurn(lastTurn)]; /* Call currentTurn for currentPlayer assignment */
+
+    if(currentPlayer->piecesKept > 0){
+        if(userInputInt("Enter 0 to move a stack on the board or 1 to place a kept piece on the board: ") == 1){
+
+        }
+    }
 
     /*
      * Loop to take user input of indices and check that they are valid in the current state of the game
@@ -96,5 +103,22 @@ void resetLastTurn(bool *lastTurn){
     else{
         lastTurn[0] = true;
         lastTurn[1] = false;
+    }
+}
+
+void placeKeptPieces(player *currentPlayer, square board[BOARD_SIZE][BOARD_SIZE]){
+    int line, column;
+
+    puts("Where would you like to place your piece:\n");
+    line = userInputInt("Enter the line number of the square: ");
+    column = userInputInt("Enter the column number of the square: ");
+
+    piece *keptPiece = malloc(sizeof(piece));
+
+    square *square1 = &board[line][column];
+    stack(keptPiece, board[line][column].stack);
+
+    if(board[line][column].num_pieces > 5){
+        pieceNumManager(&board[line][column], NULL, currentPlayer);
     }
 }
