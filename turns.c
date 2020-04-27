@@ -5,7 +5,6 @@
 #include "moves.h"
 #include "turns.h"
 #include "input_output.h"
-#include "in_game_status.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,20 +17,24 @@ void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOA
     /*
      * Offer to show user the status of any of the squares on the board
      * use squareStatusPrinter function to show these squares
+     * user can input 0 or 1 for their choice but loop continues until 1 (the continue choice is inputted)
      */
 
     for (bool moveOn = false; !moveOn;) {
         int input = userInputInt("Enter 0 if you would like to see the status of any square or 1 if you would like to proceed with your turn: ");
         if (input == 0) {
+            /*
+             * Establish square user would like to view
+             */
             line = userInputInt("Enter the index of the line of the piece you would like to see the status of: ");
             column = userInputInt("Enter the index of the column of the piece you would like to see the status of: ");
             squareStatusPrinter(&board[line][column]); /* Print status of this square */
         }
         else if(input == 1){
-            moveOn = true;
+            moveOn = true; /* If user chooses to continue boolean break condition becomes true */
         }
         else{
-            puts("Please enter either 1 or 0!");
+            puts("Please enter either 1 or 0!"); /* error message when user does not enter 0 or 1 */
         }
     }
 
