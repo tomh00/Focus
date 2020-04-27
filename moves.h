@@ -9,8 +9,6 @@
 
 #include <stdbool.h>
 
-void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]);
-
 void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE], player *currentPlayer);
 
 void removePieces(piece *last, player *currentPlayer);

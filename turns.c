@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]){
+player * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]){
     int line, column; /* Variables to hold index */
     bool validSquare = false; /* Loop break variable */
     player *currentPlayer = &players[currentTurn(lastTurn)]; /* Call currentTurn for currentPlayer assignment */
@@ -76,6 +76,8 @@ void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOA
     }
 
     movementManager(line, column, board, currentPlayer);
+
+    return currentPlayer;
 }
 
 int currentTurn(bool lastTurn[]){

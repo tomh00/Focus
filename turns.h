@@ -9,7 +9,7 @@
 
 #endif //FOCUS_TURNS_H
 
-void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]);
+player * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOARD_SIZE]);
 
 int currentTurn(bool lastTurn[]);
 
