@@ -22,10 +22,44 @@ int main() {
 
     bool lastTurn[] = {false, false}; /* Boolean array to maintain turns of the game */
 
-    for(int i = 0; i < 20; i ++) {
-        turnManager(lastTurn, players, board); /* Takes care of player movement */
-        print_board(board);
-    }
+
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+    turnManager(lastTurn, players, board); /* Takes care of player movement */
+    print_board(board);
+
+
 
     return 0;
 }

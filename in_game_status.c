@@ -6,9 +6,9 @@
 #include "stdio.h"
 
 void squareStatusPrinter(square *statusSquare){
-    printf("The number of pieces on this square is: %d", statusSquare->num_pieces);
+    printf("\nThe number of pieces on this square is: %d\n", statusSquare->num_pieces);
 
-    puts("The stack contains the following pieces:\n");
+    puts("The stack contains the following pieces:");
     while(statusSquare->stack->next != NULL){
         if(statusSquare->stack->piece_color == RED){
             printf("R --> ");
@@ -19,21 +19,22 @@ void squareStatusPrinter(square *statusSquare){
         statusSquare->stack = statusSquare->stack->next;
     }
     if(statusSquare->stack == RED) {
-        printf("R\n");
+        printf("R\n\n");
     }
     else{
-        printf("G\n");
+        printf("G\n\n");
     }
 }
 
 void playerStatusPrinter(player *currentPlayer){
     printf("Player Name: %s\n", currentPlayer->playerName);
     if(currentPlayer->player_color == RED) {
-        printf("Player Colour: RED");
+        printf("Player Colour: RED\n");
     }
     else {
-        printf("Player Colour: GREEN");
+        printf("Player Colour: GREEN\n");
     }
-    printf("Pieces Kept: %d", currentPlayer->piecesKept);
-    printf("Piece Captured: %d", currentPlayer->capturedPieces);
+    printf("Pieces Kept: %d\n", currentPlayer->piecesKept);
+    printf("Piece Captured: %d\n", currentPlayer->capturedPieces);
+    printf("\n");
 }

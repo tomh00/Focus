@@ -14,26 +14,21 @@ void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOA
     bool validSquare = false; /* Loop break variable */
     player *currentPlayer = &players[currentTurn(lastTurn)]; /* Call currentTurn for currentPlayer assignment */
 
+    playerStatusPrinter(currentPlayer); /* Show current player their current status */
     /*
      * Offer to show user the status of any of the squares on the board
      * use squareStatusPrinter function to show these squares
      */
-
-    int playerStatus = 0;
-    while(playerStatus == 0){
-        playerStatus = userInputInt("Enter 0 if you would like to see your player status or 1 if you would like to proceed with your turn: ");
-        if(playerStatus == 0){
-            playerStatusPrinter(currentPlayer);
-        }
-    }
-
-    int squareStatus = 0 ;
+    /*int squareStatus = 0 ;
     while(squareStatus == 0) {
         squareStatus = userInputInt("Enter 0 if you would like to see the status of any square or 1 if you would like to proceed with your turn: ");
+        if(squareStatus != 0){
+            break;
+        }
         line = userInputInt("Enter the index of the line of the piece you would like to see the status of: ");
         column = userInputInt("Enter the index of the column of the piece you would like to see the status of: ");
         squareStatusPrinter(&board[line][column]); /* Print status of this square */
-    }
+    /*}*/
     /*
      * Offer the user to place a kept piece of theirs if they have any
      */
@@ -65,9 +60,8 @@ void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOA
             testEmpty(&board[line][column]) || !testColour(&board[line][column], currentPlayer)) {
             puts("You cannot move this piece!"
                  "\nPlease ensure you pick a square with a piece on it and a stack with your colour at the top!");
-            resetLastTurn(lastTurn); /* reset boolean array to repeat user turn */
         }
-            else{
+        else{
             validSquare = true; /* break condition satisfied */
         }
     }
@@ -115,32 +109,18 @@ bool testColour(square *testPiece, player *currentPlayer){
     return false;
 }
 
-void resetLastTurn(bool *lastTurn){
-    /*
-     * Test orientation of lastTurn array
-     * Swap the setup
-     */
-    if(lastTurn[0] == true){
-        lastTurn[0] = false;
-        lastTurn[1] = true;
-    }
-    else{
-        lastTurn[0] = true;
-        lastTurn[1] = false;
-    }
-}
-
 void placeKeptPieces(player *currentPlayer, square board[BOARD_SIZE][BOARD_SIZE]){
     int line, column;
 
-    puts("Where would you like to place your piece:\n");
+    puts("\nWhere would you like to place your piece:");
     line = userInputInt("Enter the line number of the square: ");
     column = userInputInt("Enter the column number of the square: ");
 
     piece *keptPiece = malloc(sizeof(piece));
-
-    square *square1 = &board[line][column];
+    keptPiece->piece_color = currentPlayer->player_color;
     stack(keptPiece, board[line][column].stack);
+    board[line][column].stack = keptPiece;
+    currentPlayer->piecesKept -= 1;
 
     if(board[line][column].num_pieces > 5){
         pieceNumManager(&board[line][column], NULL, currentPlayer);
