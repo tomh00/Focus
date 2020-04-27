@@ -19,16 +19,22 @@ void turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE][BOA
      * Offer to show user the status of any of the squares on the board
      * use squareStatusPrinter function to show these squares
      */
-    /*int squareStatus = 0 ;
-    while(squareStatus == 0) {
-        squareStatus = userInputInt("Enter 0 if you would like to see the status of any square or 1 if you would like to proceed with your turn: ");
-        if(squareStatus != 0){
-            break;
+
+    for (bool moveOn = false; !moveOn;) {
+        int input = userInputInt("Enter 0 if you would like to see the status of any square or 1 if you would like to proceed with your turn: ");
+        if (input == 0) {
+            line = userInputInt("Enter the index of the line of the piece you would like to see the status of: ");
+            column = userInputInt("Enter the index of the column of the piece you would like to see the status of: ");
+            squareStatusPrinter(&board[line][column]); /* Print status of this square */
         }
-        line = userInputInt("Enter the index of the line of the piece you would like to see the status of: ");
-        column = userInputInt("Enter the index of the column of the piece you would like to see the status of: ");
-        squareStatusPrinter(&board[line][column]); /* Print status of this square */
-    /*}*/
+        else if(input == 1){
+            moveOn = true;
+        }
+        else{
+            puts("Please enter either 1 or 0!");
+        }
+    }
+
     /*
      * Offer the user to place a kept piece of theirs if they have any
      */

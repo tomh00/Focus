@@ -6,19 +6,19 @@
 #include "stdio.h"
 
 void squareStatusPrinter(square *statusSquare){
-    printf("\nThe number of pieces on this square is: %d\n", statusSquare->num_pieces);
-
+    square *current = statusSquare;
+    printf("\nThe number of pieces on this square is: %d\n", current->num_pieces);
     puts("The stack contains the following pieces:");
-    while(statusSquare->stack->next != NULL){
-        if(statusSquare->stack->piece_color == RED){
+    while(current->stack->next != NULL){
+        if(current->stack->piece_color == RED){
             printf("R --> ");
         }
         else{
             printf("G --> ");
         }
-        statusSquare->stack = statusSquare->stack->next;
+        current->stack = current->stack->next;
     }
-    if(statusSquare->stack == RED) {
+    if(current->stack == RED) {
         printf("R\n\n");
     }
     else{
