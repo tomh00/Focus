@@ -5,6 +5,7 @@
 #include "moves.h"
 #include "turns.h"
 #include "input_output.h"
+#include "winning_condtion.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +13,7 @@ player * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE]
     int line, column; /* Variables to hold index */
     bool validSquare = false; /* Loop break variable */
     player *currentPlayer = &players[currentTurn(lastTurn)]; /* Call currentTurn for currentPlayer assignment */
+    player *nextPlayer = &players[nextTurn(lastTurn)];
 
     playerStatusPrinter(currentPlayer); /* Show current player their current status */
     /*
@@ -39,11 +41,21 @@ player * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE]
     }
 
     /*
+     * If player has no more top pieces of their colour they must place a piece
+     */
+    if(!topPieceFinder(board, currentPlayer->player_color)){
+        puts("You have no pieces to move! You must place a reserved piece down!");
+        placeKeptPieces(currentPlayer, board);
+        return nextPlayer;
+    }
+
+    /*
      * Offer the user to place a kept piece of theirs if they have any
      */
     if(currentPlayer->piecesKept > 0){
         if(userInputInt("Enter 0 to move a stack on the board or 1 to place a kept piece on the board: ") == 1){
             placeKeptPieces(currentPlayer, board);
+            return nextPlayer;
         }
     }
 
@@ -77,7 +89,7 @@ player * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE]
 
     movementManager(line, column, board, currentPlayer);
 
-    return currentPlayer;
+    return nextPlayer;
 }
 
 int currentTurn(bool lastTurn[]){
@@ -95,6 +107,18 @@ int currentTurn(bool lastTurn[]){
         lastTurn[1] = true;
         return 1;
     }
+}
+
+int nextTurn(bool lastTurn[]){
+    /*
+     * If player did not go last, adjust array for next turn
+     * return corresponding number
+     */
+    if(!lastTurn[0]){
+        return 0;
+    }
+
+        return 1;
 }
 
 bool testEmpty(square *testSquare){

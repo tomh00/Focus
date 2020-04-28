@@ -8,17 +8,24 @@
 #include <stdlib.h>
 
 void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE], player *currentPlayer){
-    int input;
-    int movement = board[line][column].num_pieces; /* Number of squares that the piece selected can be moved */
+    int input, movement;
     bool validMove = false; /* Boolean to determine when to break from loop */
 
     while(!validMove) {
-        printf("You can move this piece %d squares" /* Pieces can be moved the size of the stack */
+        if(board[line][column].num_pieces > 1) {
+            printf("You can move this piece up to %d squares"
+                   "Enter how many squares you would like to move it", board[line][column].num_pieces);
+            scanf("%d", &movement);
+        }
+        else{
+            movement = 1;
+        }
+        printf("Please indicate which direction you would like to move this stack:"
                "\nPlease indicate:"
                "\n 1 for UP"
                "\n 2 for DOWN"
                "\n 3 for LEFT"
-               "\n 4 for RIGHT", board[line][column].num_pieces);
+               "\n 4 for RIGHT\n");
         scanf("%d", &input); /* Take in direction of movement from user */
         switch (input) {
             case 1:
@@ -26,6 +33,8 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
                  * If not break from switch
                  */
                 if (checkValidity(&board[line - movement][column], line-movement, column) == INVALID) {
+                    puts("There are not enough squares to move this piece in this direction!\n"
+                         "Please try again:\n");
                     break;
                 }
                 else{
@@ -42,6 +51,8 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
              */
             case 2:
                 if(checkValidity(&board[line + movement][column], line+movement, column) == INVALID){
+                    puts("There are not enough squares to move this piece in this direction!\n"
+                         "Please try again:\n");
                     break;
                 }
                 else{
@@ -54,6 +65,8 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
 
             case 3:
                 if(checkValidity(&board[line][column - movement], column-movement, line) == INVALID){
+                    puts("There are not enough squares to move this piece in this direction!\n"
+                         "Please try again:\n");
                     break;
                 }
                 else{
@@ -66,6 +79,8 @@ void movementManager(int line, int column, square board[BOARD_SIZE][BOARD_SIZE],
 
             case 4:
                 if(checkValidity(&board[line][column + movement], column+movement, line) == INVALID){
+                    puts("There are not enough squares to move this piece in this direction!\n"
+                         "Please try again:\n");
                     break;
                 }
                 else{
@@ -131,8 +146,6 @@ square_type checkValidity(square *testSquare, int testIndex1, int testIndex2){
      * return Valid or Invalid
      */
     if(testSquare->type == INVALID || testIndex1 < 0 || testIndex1 > 7 || testIndex2 < 0 || testIndex2 > 7){
-        puts("There are not enough squares to move this piece in this direction!\n"
-             "Please try again:\n");
         return INVALID;
     }
     else{

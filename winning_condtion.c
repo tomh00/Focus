@@ -3,6 +3,8 @@
 //
 
 #include "winning_condtion.h"
+#include "moves.h"
+#include "turns.h"
 
 bool topPieceFinder(square board[BOARD_SIZE][BOARD_SIZE], color currentPlayerColour){
     /*
@@ -13,8 +15,10 @@ bool topPieceFinder(square board[BOARD_SIZE][BOARD_SIZE], color currentPlayerCol
      */
     for(int line = 0; line < BOARD_SIZE; line++){
         for(int column = 0; column < BOARD_SIZE; column++){
-            if(board[line][column].stack->piece_color == currentPlayerColour){
-                return true;
+            if(checkValidity(&board[line][column], line, column) == VALID && !testEmpty(&board[line][column])) {
+                if (board[line][column].stack->piece_color == currentPlayerColour) {
+                    return true;
+                }
             }
         }
     }

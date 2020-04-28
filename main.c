@@ -31,7 +31,7 @@ int main() {
 
     while(!endGame) {
         /*
-         *
+         *  Keep iterating through turns of the game until there are no more of a players colour top pieces and that player has no more reserved pieces
          */
         if(topPieceFinder(board, currentPlayer->player_color ) || reservedPieceChecker(currentPlayer)){
             currentPlayer = turnManager(lastTurn, players, board); /* Takes care of player movement */
