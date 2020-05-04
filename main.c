@@ -45,8 +45,14 @@ int main() {
     /*
      * Print information about winning player
      */
-    printf("%s is the Winner! \nPlayer details:\n", currentPlayer->playerName);
-    playerStatusPrinter(currentPlayer);
+    if(nextTurn(lastTurn) == 0) {
+        printf("%s Wins! \nPlayer details:\n", players[0].playerName);
+        playerStatusPrinter(&players[0]);
+    }
+    else{
+        printf("%s Wins! \nPlayer details:\n", players[1].playerName);
+        playerStatusPrinter(&players[1]);
+    }
 
     return 0;
 }
