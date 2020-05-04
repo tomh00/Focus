@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "input_output.h"
+#include "turns.h"
 
 /* FUnction to print the board:
  * Invalid Squares are printed as | - |
@@ -53,30 +54,33 @@ int userInputInt(char *string){
  * Number of pieces on and
  * order of pieces on given square
  */
-void squareStatusPrinter(square *statusSquare){
-    square *current = statusSquare; /* Cannot access data in passed pointer without changing so use another pointer */
+void squareStatusPrinter(square *statusSquare, piece *topPiece){
+    piece *current = topPiece; /* Cannot access data in passed pointer without changing so use another pointer */
     /*
      * Number of pieces on square
      */
-    printf("\nThe number of pieces on this square is: %d\n", current->num_pieces);
+    printf("\nThe number of pieces on this square is: %d\n", statusSquare->num_pieces);
 
     /*
      * Display pieces in their order
      */
+    if(testEmpty(statusSquare)){
+        return;
+    }
     puts("The stack contains the following pieces:");
-    while(current->stack->next != NULL){ /* Navigate through stack */
-        if(current->stack->piece_color == RED){
+    while(current->next != NULL){ /* Navigate through stack */
+        if(current->piece_color == RED){
             printf("R --> ");
         }
         else{
             printf("G --> ");
         }
-        current->stack = current->stack->next;
+        current = current->next;
     }
     /*
      * Print final piece
      */
-    if(current->stack == RED) {
+    if(current->piece_color == RED) {
         printf("R\n\n");
     }
     else{

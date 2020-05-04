@@ -30,7 +30,7 @@ player * turnManager(bool lastTurn[], player players[], square board[BOARD_SIZE]
              */
             line = userInputInt("Enter the index of the line of the piece you would like to see the status of: ");
             column = userInputInt("Enter the index of the column of the piece you would like to see the status of: ");
-            squareStatusPrinter(&board[line][column]); /* Print status of this square */
+            squareStatusPrinter(&board[line][column], board[line][column].stack); /* Print status of this square */
         }
         else if(input == 1){
             moveOn = true; /* If user chooses to continue boolean break condition becomes true */

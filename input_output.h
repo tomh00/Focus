@@ -17,4 +17,4 @@ int userInputInt(char *string);
 
 void playerStatusPrinter(player *currentPlayer);
 
-void squareStatusPrinter(square *statusSquare);
+void squareStatusPrinter(square *statusSquare, piece *topPiece);
