@@ -42,5 +42,11 @@ int main() {
         }
     }
 
+    /*
+     * Print information about winning player
+     */
+    printf("%s is the Winner! \nPlayer details:\n", currentPlayer->playerName);
+    playerStatusPrinter(currentPlayer);
+
     return 0;
 }
