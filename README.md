@@ -1,6 +1,6 @@
 # Focus Game - Command Line Implementation
 
-This project is a command line implementation of the game known as "Focus." The game rules can be found linked in the [Resources](##Resources) section.
+This project is a command line implementation of the game known as "Focus." The game rules can be found linked below.
 
 ## How to Play
 
